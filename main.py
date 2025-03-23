@@ -1,29 +1,52 @@
-from fastapi import FastAPI
-from pydantic import BaseModel
+from fastapi import FastAPI, Depends
+from fastapi.middleware.cors import CORSMiddleware
+import sqlite3
 
 app = FastAPI()
 
-# In-memory database (for demonstration purposes)
-items = [
-    {"name": "Item 1", "description": "This is item 1"},
-    {"name": "Item 2", "description": "This is item 2"},
-    {"name": "Item 3", "description": "This is item 3"},
-]
+# Enable CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
-# Pydantic model for item data
-class Item(BaseModel):
-    name: str
-    description: str
+# Create a database dependency
+def get_db():
+    conn = sqlite3.connect("todos.db")
+    try:
+        yield conn
+    finally:
+        conn.close()
 
 
-# Create an item
-@app.post("/items/", response_model=Item)
-async def create_item(item: Item):
-    items.append(item)
-    return item
+# Get all todos
+@app.get("/todos")
+def get_todos(conn=Depends(get_db)):
+    c = conn.cursor()
+    c.execute("SELECT * FROM todos")
+    todos = c.fetchall()
+    return {
+        "todos": [{"id": todo[0], "task": todo[1]} for todo in todos] if todos else []
+    }
 
-# List all items
-@app.get("/items/", response_model=list[Item])
-async def list_items():
-    return items
+
+# Add a new todo
+@app.post("/todos")
+def add_todo(task: str, conn=Depends(get_db)):
+    c = conn.cursor()
+    c.execute("INSERT INTO todos (task) VALUES (?)", (task,))
+    conn.commit()
+    return {"message": "Todo added successfully"}
+
+
+# Delete a todo
+@app.delete("/todos/{todo_id}")
+def delete_todo(todo_id: int, conn=Depends(get_db)):
+    c = conn.cursor()
+    c.execute("DELETE FROM todos WHERE id=?", (todo_id,))
+    conn.commit()
+    return {"message": "Todo deleted successfully"}
