@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "fastapi-blog"
+version = "0.1.0"
+description = "A FastAPI blog and todo application"
+authors = ["Your Name <your.email@example.com>"]
+packages = [
+    { include = "app" }
+]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.104.0"
+uvicorn = "^0.24.0"
+pydantic = "^2.4.2"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+httpx = "^0.24.1"
+black = "^23.0.0"
+flake8 = "^6.0.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+start = "scripts.dev:start"
+test = "scripts.dev:test"
+lint = "scripts.dev:lint"
+format = "scripts.dev:format" 
