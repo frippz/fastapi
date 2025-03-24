@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from ..models.todo import Todo, TodoList
+from ..models.todo import TodoList
 from ..database import get_db
 
 router = APIRouter(
