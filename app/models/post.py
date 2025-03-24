@@ -12,6 +12,16 @@ class PostCreate(BaseModel):
             }
         }
 
+class PostDelete(BaseModel):
+    id: int
+    
+    class Config:
+        schema_extra = {
+            "example": {
+                "id": 1
+            }
+        }
+
 class Post(BaseModel):
     id: int
     title: str
