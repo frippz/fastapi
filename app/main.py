@@ -3,11 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from .routers.posts import router as posts_router
 from .routers.todos import router as todos_router
 
-# Initialize FastAPI with metadata 
+# Initialize FastAPI with metadata
 app = FastAPI(
     title="Blog and Todo API",
     description="An API for managing blog posts and todos",
-    version="1.0.0"
+    version="1.0.0",
 )
 
 # Enable CORS
@@ -23,6 +23,7 @@ app.add_middleware(
 app.include_router(posts_router)
 app.include_router(todos_router)
 
+
 @app.get("/")
 def read_root():
     """Root endpoint that provides basic API information."""
@@ -30,8 +31,5 @@ def read_root():
         "title": "Blog and Todo API",
         "version": "1.0.0",
         "documentation": "/docs",
-        "endpoints": {
-            "posts": "/posts",
-            "todos": "/todos"
-        }
-    } 
+        "endpoints": {"Posts": "/posts", "TODOs": "/todos"},
+    }
