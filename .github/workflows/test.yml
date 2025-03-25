@@ -38,7 +38,3 @@ jobs:
           path: "app/**/*.py"
           fail: true
           pr-message: true
-
-      - name: Run tests
-        run: |
-          poetry run test

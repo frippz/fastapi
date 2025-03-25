@@ -1,5 +1,6 @@
 """Router for handling blog post operations."""
 
+import logging
 from typing import List
 from uuid import UUID
 
@@ -7,6 +8,9 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from ..models.post import Post, PostCreate
 from ..database import get_db
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 router = APIRouter(
     prefix="/posts", tags=["posts"], responses={404: {"description": "Post not found"}}
@@ -31,7 +35,8 @@ def create_post(post: PostCreate, conn=Depends(get_db)):
     )
     post_data = c.fetchone()
     conn.commit()
-
+    
+    logger.debug(f"Created post with data: {post_data}")
     return {"id": UUID(post_data[0]), "title": post_data[1], "body": post_data[2]}
 
 
@@ -46,7 +51,8 @@ def get_posts(conn=Depends(get_db)):
     c = conn.cursor()
     c.execute("SELECT id, title, body FROM posts")
     posts = c.fetchall()
-
+    
+    logger.debug(f"Retrieved posts: {posts}")
     return [{"id": UUID(post[0]), "title": post[1], "body": post[2]} for post in posts]
 
 
@@ -65,8 +71,11 @@ def get_post(post_id: UUID, conn=Depends(get_db)):
         Post: The requested blog post.
     """
     c = conn.cursor()
+    logger.debug(f"Looking for post with ID: {post_id}")
     c.execute("SELECT id, title, body FROM posts WHERE id = ?", (str(post_id),))
     post = c.fetchone()
+    
+    logger.debug(f"Found post: {post}")
 
     if not post:
         raise HTTPException(status_code=404, detail="Post not found")
