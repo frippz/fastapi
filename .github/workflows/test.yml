@@ -16,7 +16,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pipx install
+          poetry install
 
       - name: Initialize database
         run: |
