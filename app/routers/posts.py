@@ -1,6 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException
+"""Router for handling blog post operations."""
+
 from typing import List
-from uuid import UUID, uuid4
+from uuid import UUID
+
+from fastapi import APIRouter, Depends, HTTPException
+
 from ..models.post import Post, PostCreate
 from ..database import get_db
 

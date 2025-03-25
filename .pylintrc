@@ -1,0 +1,38 @@
+enable=
+  errors-only
+
+disable=
+  # ALL_CAPS for constants is a bad habit from C #defines
+  invalid-name,
+
+  # importing * is intentionally inside the library
+  wildcard-import,
+  unused-wildcard-import,
+
+  # the subfiles by design have no individual docstrings
+  missing-module-docstring,
+
+  # false alarms for accessing a protected member of the class itself
+  protected-access,
+
+  # [] is a perfect default for an iterable
+  dangerous-default-value,
+
+  # gives many false alarms
+  no-else-return,
+
+  # can be fine for user-defined __neg__
+  invalid-unary-operand-type,
+
+  # should be allowed for private functions of the class itself
+  protected-access,
+
+  # I prefer to keep private helper functions inside the class,
+  # even when they don't use self
+  no-self-use,
+
+  # a sub-class with only __add__ is perfectly valid
+  too-few-public-methods,
+
+  # some shape constructors need many arguments...
+  too-many-arguments,
