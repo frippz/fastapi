@@ -29,3 +29,7 @@ start = "scripts.dev:start"
 test = "scripts.dev:test"
 lint = "scripts.dev:lint"
 format = "scripts.dev:format"
+
+[tool.black]
+line-length = 100
+target-version = ['py311']

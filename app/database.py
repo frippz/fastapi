@@ -1,3 +1,5 @@
+"""Database module for SQLite connection and initialization."""
+
 import sqlite3
 
 
