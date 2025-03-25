@@ -24,14 +24,3 @@ app.add_middleware(
 # Include routers
 app.include_router(posts_router)
 app.include_router(todos_router)
-
-
-@app.get("/")
-def read_root():
-    """Root endpoint that provides basic API information."""
-    return {
-        "title": "Blog and Todo API",
-        "version": "1.0.0",
-        "documentation": "/docs",
-        "endpoints": {"Posts": "/posts", "TODOs": "/todos"},
-    }

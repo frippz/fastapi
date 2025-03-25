@@ -7,18 +7,18 @@ def init_db():
     """
     Initialize the database with required tables.
     """
-    conn = sqlite3.connect("todos.db")
+    conn = sqlite3.connect("data.db")
     c = conn.cursor()
 
     # Drop existing tables to ensure clean state
-    c.execute('DROP TABLE IF EXISTS posts')
-    c.execute('DROP TABLE IF EXISTS todos')
+    c.execute("DROP TABLE IF EXISTS posts")
+    c.execute("DROP TABLE IF EXISTS todos")
 
     # Create todos table
     c.execute(
         """
         CREATE TABLE IF NOT EXISTS todos (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
             task TEXT NOT NULL
         )
     """
@@ -46,7 +46,7 @@ def get_db():
     Yields:
         sqlite3.Connection: A SQLite database connection.
     """
-    conn = sqlite3.connect("todos.db")
+    conn = sqlite3.connect("data.db")
     try:
         yield conn
     finally:

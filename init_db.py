@@ -2,7 +2,7 @@ import sqlite3
 
 
 def init_db():
-    conn = sqlite3.connect("todos.db")
+    conn = sqlite3.connect("data.db")
     c = conn.cursor()
 
     # Create todos table
