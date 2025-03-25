@@ -1,38 +1,37 @@
 from pydantic import BaseModel
+from uuid import UUID
 
 
 class PostCreate(BaseModel):
     title: str
-    content: str
+    body: str
 
     class Config:
         schema_extra = {
             "example": {
-                "title": "My First Blog Post",
-                "content": "This is the content of my first blog post.",
+                "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
+                "body": "quia et suscipit suscipit recusandae consequuntur expedita et cum reprehenderit molestiae ut ut quas totam nostrum rerum est autem sunt rem eveniet architecto",
             }
         }
 
 
 class PostDelete(BaseModel):
-    id: int
+    id: UUID
 
     class Config:
-        schema_extra = {"example": {"id": 1}}
+        schema_extra = {"example": {"id": "123e4567-e89b-12d3-a456-426614174000"}}
 
 
 class Post(BaseModel):
-    id: int
+    id: UUID
     title: str
-    content: str
-    created_at: str
+    body: str
 
     class Config:
         schema_extra = {
             "example": {
-                "id": 1,
-                "title": "My First Blog Post",
-                "content": "This is the content of my first blog post.",
-                "created_at": "2024-03-14 12:00:00",
+                "id": "123e4567-e89b-12d3-a456-426614174000",
+                "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
+                "body": "quia et suscipit suscipit recusandae consequuntur expedita et cum reprehenderit molestiae ut ut quas totam nostrum rerum est autem sunt rem eveniet architecto",
             }
         }
