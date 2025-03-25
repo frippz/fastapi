@@ -1,7 +1,7 @@
 """Models for handling blog post operations."""
 
-from pydantic import BaseModel
 from uuid import UUID
+from pydantic import BaseModel
 
 
 class PostCreate(BaseModel):
