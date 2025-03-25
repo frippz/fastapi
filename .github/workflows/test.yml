@@ -16,7 +16,7 @@ jobs:
 
       - name: Install poetry
         run: |
-          npx install poetry
+          pipx install poetry
 
       - name: Install dependencies
         run: |
