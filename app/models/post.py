@@ -1,22 +1,44 @@
-"""Models for handling blog post operations."""
+"""Pydantic models for blog post operations and data validation."""
 
 from uuid import UUID
+from typing import List, Optional
 from pydantic import BaseModel
 
 
-class PostCreate(BaseModel):
-    """Model for creating a new blog post."""
+class PostBase(BaseModel):
+    """Base model for post operations."""
 
     title: str
     body: str
+
+
+class PostCreate(PostBase):
+    """Model for creating a new blog post."""
 
     class Config:
         """Configuration for PostCreate model with example data."""
 
         schema_extra = {
             "example": {
-                "title": "sunt aut facere repellat provident",
-                "body": "quia et suscipit suscipit recusandae consequuntur",
+                "title": "My First Blog Post",
+                "body": "This is the content of my first blog post.",
+            }
+        }
+
+
+class PostUpdate(BaseModel):
+    """Model for updating an existing blog post."""
+
+    title: Optional[str] = None
+    body: Optional[str] = None
+
+    class Config:
+        """Configuration for PostUpdate model with example data."""
+
+        schema_extra = {
+            "example": {
+                "title": "Updated Blog Post Title",
+                "body": "Updated content of the blog post.",
             }
         }
 
@@ -32,12 +54,10 @@ class PostDelete(BaseModel):
         schema_extra = {"example": {"id": "123e4567-e89b-12d3-a456-426614174000"}}
 
 
-class Post(BaseModel):
-    """Model representing a complete blog post."""
+class Post(PostBase):
+    """Model representing a blog post."""
 
     id: UUID
-    title: str
-    body: str
 
     class Config:
         """Configuration for Post model with example data."""
@@ -45,7 +65,7 @@ class Post(BaseModel):
         schema_extra = {
             "example": {
                 "id": "123e4567-e89b-12d3-a456-426614174000",
-                "title": "sunt aut facere repellat provident",
-                "body": "quia et suscipit suscipit recusandae",
+                "title": "My First Blog Post",
+                "body": "This is the content of my first blog post.",
             }
         }
