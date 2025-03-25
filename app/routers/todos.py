@@ -1,4 +1,7 @@
+"""Router for handling todo operations."""
+
 from fastapi import APIRouter, Depends
+
 from ..models.todo import TodoList
 from ..database import get_db
 

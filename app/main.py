@@ -1,3 +1,5 @@
+"""Main FastAPI application module that configures and initializes the API."""
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .routers.posts import router as posts_router

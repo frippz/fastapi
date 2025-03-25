@@ -1,38 +1,51 @@
+"""Models for handling blog post operations."""
+
+from uuid import UUID
 from pydantic import BaseModel
 
 
 class PostCreate(BaseModel):
+    """Model for creating a new blog post."""
+
     title: str
-    content: str
+    body: str
 
     class Config:
+        """Configuration for PostCreate model with example data."""
+
         schema_extra = {
             "example": {
-                "title": "My First Blog Post",
-                "content": "This is the content of my first blog post.",
+                "title": "sunt aut facere repellat provident",
+                "body": "quia et suscipit suscipit recusandae consequuntur",
             }
         }
 
 
 class PostDelete(BaseModel):
-    id: int
+    """Model for deleting a blog post."""
+
+    id: UUID
 
     class Config:
-        schema_extra = {"example": {"id": 1}}
+        """Configuration for PostDelete model with example data."""
+
+        schema_extra = {"example": {"id": "123e4567-e89b-12d3-a456-426614174000"}}
 
 
 class Post(BaseModel):
-    id: int
+    """Model representing a complete blog post."""
+
+    id: UUID
     title: str
-    content: str
-    created_at: str
+    body: str
 
     class Config:
+        """Configuration for Post model with example data."""
+
         schema_extra = {
             "example": {
-                "id": 1,
-                "title": "My First Blog Post",
-                "content": "This is the content of my first blog post.",
-                "created_at": "2024-03-14 12:00:00",
+                "id": "123e4567-e89b-12d3-a456-426614174000",
+                "title": "sunt aut facere repellat provident",
+                "body": "quia et suscipit suscipit recusandae",
             }
         }
