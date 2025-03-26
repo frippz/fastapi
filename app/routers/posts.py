@@ -1,7 +1,6 @@
 """Router for post operations."""
 
 from fastapi import APIRouter, HTTPException, status
-from sqlite3 import Connection
 from typing import List
 from datetime import datetime
 
@@ -20,22 +19,19 @@ async def create_post(post: PostCreate):
     """Create a new post."""
     with get_db() as db:
         cursor = db.cursor()
-        
+
         # Check if user exists
         cursor.execute("SELECT id FROM users WHERE user_id = ?", (post.user_id,))
         if not cursor.fetchone():
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="User not found"
-            )
-        
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
         # Create new post
         cursor.execute(
             "INSERT INTO posts (title, body, user_id) VALUES (?, ?, ?)",
-            (post.title, post.body, post.user_id)
+            (post.title, post.body, post.user_id),
         )
         db.commit()
-        
+
         # Fetch the created post
         cursor.execute("SELECT * FROM posts WHERE id = ?", (cursor.lastrowid,))
         post_data = cursor.fetchone()
@@ -44,7 +40,7 @@ async def create_post(post: PostCreate):
             title=post_data[1],
             body=post_data[2],
             user_id=post_data[3],
-            created_at=datetime.fromisoformat(post_data[4]) if post_data[4] else datetime.utcnow()
+            created_at=datetime.fromisoformat(post_data[4]) if post_data[4] else datetime.utcnow(),
         )
 
 
@@ -61,7 +57,7 @@ async def get_posts():
                 title=post[1],
                 body=post[2],
                 user_id=post[3],
-                created_at=datetime.fromisoformat(post[4]) if post[4] else datetime.utcnow()
+                created_at=datetime.fromisoformat(post[4]) if post[4] else datetime.utcnow(),
             )
             for post in posts
         ]
@@ -74,19 +70,16 @@ async def get_post(post_id: int):
         cursor = db.cursor()
         cursor.execute("SELECT * FROM posts WHERE id = ?", (post_id,))
         post = cursor.fetchone()
-        
+
         if not post:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Post not found"
-            )
-        
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
+
         return Post(
             id=post[0],
             title=post[1],
             body=post[2],
             user_id=post[3],
-            created_at=datetime.fromisoformat(post[4]) if post[4] else datetime.utcnow()
+            created_at=datetime.fromisoformat(post[4]) if post[4] else datetime.utcnow(),
         )
 
 
@@ -95,15 +88,12 @@ async def get_user_posts(user_id: str):
     """Get all posts by a specific user."""
     with get_db() as db:
         cursor = db.cursor()
-        
+
         # Check if user exists
         cursor.execute("SELECT id FROM users WHERE user_id = ?", (user_id,))
         if not cursor.fetchone():
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="User not found"
-            )
-        
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
         # Get user's posts
         cursor.execute("SELECT * FROM posts WHERE user_id = ? ORDER BY created_at DESC", (user_id,))
         posts = cursor.fetchall()
@@ -113,7 +103,7 @@ async def get_user_posts(user_id: str):
                 title=post[1],
                 body=post[2],
                 user_id=post[3],
-                created_at=datetime.fromisoformat(post[4]) if post[4] else datetime.utcnow()
+                created_at=datetime.fromisoformat(post[4]) if post[4] else datetime.utcnow(),
             )
             for post in posts
         ]
@@ -124,16 +114,13 @@ async def update_post(post_id: int, post_update: PostUpdate):
     """Update a post."""
     with get_db() as db:
         cursor = db.cursor()
-        
+
         # Check if post exists
         cursor.execute("SELECT * FROM posts WHERE id = ?", (post_id,))
         existing_post = cursor.fetchone()
         if not existing_post:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Post not found"
-            )
-        
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
+
         # Update post fields
         update_fields = []
         values = []
@@ -143,21 +130,25 @@ async def update_post(post_id: int, post_update: PostUpdate):
         if post_update.body is not None:
             update_fields.append("body = ?")
             values.append(post_update.body)
-        
+
         if not update_fields:
             return Post(
                 id=existing_post[0],
                 title=existing_post[1],
                 body=existing_post[2],
                 user_id=existing_post[3],
-                created_at=datetime.fromisoformat(existing_post[4]) if existing_post[4] else datetime.utcnow()
+                created_at=(
+                    datetime.fromisoformat(existing_post[4])
+                    if existing_post[4]
+                    else datetime.utcnow()
+                ),
             )
-        
+
         values.append(post_id)
         query = f"UPDATE posts SET {', '.join(update_fields)} WHERE id = ?"
         cursor.execute(query, values)
         db.commit()
-        
+
         # Fetch updated post
         cursor.execute("SELECT * FROM posts WHERE id = ?", (post_id,))
         updated_post = cursor.fetchone()
@@ -166,7 +157,9 @@ async def update_post(post_id: int, post_update: PostUpdate):
             title=updated_post[1],
             body=updated_post[2],
             user_id=updated_post[3],
-            created_at=datetime.fromisoformat(updated_post[4]) if updated_post[4] else datetime.utcnow()
+            created_at=(
+                datetime.fromisoformat(updated_post[4]) if updated_post[4] else datetime.utcnow()
+            ),
         )
 
 
@@ -175,15 +168,12 @@ async def delete_post(post_id: int):
     """Delete a post."""
     with get_db() as db:
         cursor = db.cursor()
-        
+
         # Check if post exists
         cursor.execute("SELECT id FROM posts WHERE id = ?", (post_id,))
         if not cursor.fetchone():
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Post not found"
-            )
-        
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
+
         # Delete post
         cursor.execute("DELETE FROM posts WHERE id = ?", (post_id,))
         db.commit()
