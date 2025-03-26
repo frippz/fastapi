@@ -34,9 +34,7 @@ class Todo(TodoBase):
     class Config:
         """Pydantic config for ORM mode."""
 
-        json_schema_extra = {
-            "example": {"id": 1, "task": "Buy groceries"}
-        }
+        json_schema_extra = {"example": {"id": 1, "task": "Buy groceries"}}
         from_attributes = True
 
 
@@ -44,7 +42,7 @@ class TodoList(BaseModel):
     todos: List[Todo]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "todos": [
                     {"id": "123e4567-e89b-12d3-a456-426614174000", "task": "Buy groceries"},
