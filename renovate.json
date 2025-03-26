@@ -17,6 +17,11 @@
       "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
       "matchCurrentVersion": "!/^0/",
       "automerge": true
+    },
+    {
+      "matchManagers": ["poetry"],
+      "matchPackageNames": ["python"],
+      "rangeStrategy": "replace"
     }
   ]
 }
