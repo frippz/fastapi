@@ -27,7 +27,6 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 start = "scripts.dev:start"
-test = "scripts.dev:test"
 lint = "scripts.dev:lint"
 format = "scripts.dev:format"
 
