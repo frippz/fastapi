@@ -1,28 +1,44 @@
 {
   "rangeStrategy": "pin",
-  "extends": ["config:recommended", "schedule:weekdays"],
+  "extends": [
+    "config:recommended",
+    "schedule:weekdays"
+  ],
   "timezone": "CET",
   "prConcurrentLimit": 5,
   "branchPrefix": "renovate-",
-  "automergeSchedule": ["after 8am and before 4pm every weekday"],
+  "automergeSchedule": [
+    "after 8am and before 4pm every weekday"
+  ],
   "nvm": {
     "enabled": false
   },
   "major": {
     "dependencyDashboardApproval": true
   },
-  "addLabels": ["renovate"],
+  "addLabels": [
+    "renovate"
+  ],
   "packageRules": [
     {
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest"
+      ],
       "matchCurrentVersion": "!/^0/",
       "automerge": true
     },
     {
       "description": "Leave Python version",
-      "matchManagers": ["npm"],
-      "matchPackagePatterns": ["python"],
-      "allowedVersions": "^3.11"
+      "matchManagers": [
+        "npm"
+      ],
+      "allowedVersions": "^3.11",
+      "matchPackageNames": [
+        "/python/"
+      ]
     }
   ]
 }
