@@ -12,7 +12,6 @@
     "dependencyDashboardApproval": true
   },
   "addLabels": ["renovate"],
-  "commitMessageExtra": " (#patch)",
   "packageRules": [
     {
       "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
