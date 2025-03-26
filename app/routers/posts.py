@@ -1,101 +1,184 @@
-import logging
+"""Router for post operations."""
+
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlite3 import Connection
 from typing import List
-from uuid import UUID
+from datetime import datetime
 
-from fastapi import APIRouter, Depends, HTTPException
-
-from ..models.post import Post, PostCreate, PostUpdate
-from ..database import get_db
-
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
+from app.database import get_db
+from app.models.post import Post, PostCreate, PostUpdate
 
 router = APIRouter(
-    prefix="/posts", tags=["posts"], responses={404: {"description": "Post not found"}}
+    prefix="/posts",
+    tags=["posts"],
+    responses={404: {"description": "Not found"}},
 )
 
 
-@router.post("", response_model=Post, summary="Create a new blog post")
-def create_post(post: PostCreate, conn=Depends(get_db)):
-    c = conn.cursor()
-    c.execute(
-        "INSERT INTO posts (title, body) VALUES (?, ?) RETURNING id, title, body",
-        (post.title, post.body),
+@router.post("/", response_model=Post, status_code=status.HTTP_201_CREATED)
+async def create_post(post: PostCreate, db: Connection = Depends(get_db)):
+    """Create a new post."""
+    cursor = db.cursor()
+    
+    # Check if user exists
+    cursor.execute("SELECT id FROM users WHERE user_id = ?", (post.user_id,))
+    if not cursor.fetchone():
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    # Create new post
+    cursor.execute(
+        "INSERT INTO posts (title, body, user_id) VALUES (?, ?, ?)",
+        (post.title, post.body, post.user_id)
     )
-    post_data = c.fetchone()
-    conn.commit()
-
-    logger.debug(f"Created post with data: {post_data}")
-    return {"id": UUID(post_data[0]), "title": post_data[1], "body": post_data[2]}
-
-
-@router.get("", response_model=List[Post], summary="Get all blog posts")
-def get_posts(conn=Depends(get_db)):
-    c = conn.cursor()
-    c.execute("SELECT id, title, body FROM posts")
-    posts = c.fetchall()
-
-    logger.debug(f"Retrieved posts: {posts}")
-    return [{"id": UUID(post[0]), "title": post[1], "body": post[2]} for post in posts]
+    db.commit()
+    
+    # Fetch the created post
+    cursor.execute("SELECT * FROM posts WHERE id = ?", (cursor.lastrowid,))
+    post_data = cursor.fetchone()
+    return Post(
+        id=post_data[0],
+        title=post_data[1],
+        body=post_data[2],
+        user_id=post_data[3],
+        created_at=datetime.fromisoformat(post_data[4]) if post_data[4] else datetime.utcnow()
+    )
 
 
-@router.get("/{post_id}", response_model=Post, summary="Get a specific blog post")
-def get_post(post_id: UUID, conn=Depends(get_db)):
-    c = conn.cursor()
-    logger.debug(f"Looking for post with ID: {post_id}")
-    c.execute("SELECT id, title, body FROM posts WHERE id = ?", (str(post_id),))
-    post = c.fetchone()
+@router.get("/", response_model=List[Post])
+async def get_posts(db: Connection = Depends(get_db)):
+    """Get all posts."""
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM posts ORDER BY created_at DESC")
+    posts = cursor.fetchall()
+    return [
+        Post(
+            id=post[0],
+            title=post[1],
+            body=post[2],
+            user_id=post[3],
+            created_at=datetime.fromisoformat(post[4]) if post[4] else datetime.utcnow()
+        )
+        for post in posts
+    ]
 
-    logger.debug(f"Found post: {post}")
 
+@router.get("/{post_id}", response_model=Post)
+async def get_post(post_id: int, db: Connection = Depends(get_db)):
+    """Get a specific post by ID."""
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM posts WHERE id = ?", (post_id,))
+    post = cursor.fetchone()
+    
     if not post:
-        raise HTTPException(status_code=404, detail="Post not found")
-
-    return {"id": UUID(post[0]), "title": post[1], "body": post[2]}
-
-
-@router.patch("/{post_id}", response_model=Post, summary="Update a blog post")
-def update_post(post_id: UUID, post_update: PostUpdate, conn=Depends(get_db)):
-    c = conn.cursor()
-    logger.debug(f"Attempting to update post with ID: {post_id}")
-
-    # check if post exists
-    c.execute("SELECT id, title, body FROM posts WHERE id = ?", (str(post_id),))
-    post = c.fetchone()
-
-    if not post:
-        raise HTTPException(status_code=404, detail="Post not found")
-
-    # Update only provided fields
-    if post_update.title is not None or post_update.body is not None:
-        updates = []
-        values = []
-        if post_update.title is not None:
-            updates.append("title = ?")
-            values.append(post_update.title)
-        if post_update.body is not None:
-            updates.append("body = ?")
-            values.append(post_update.body)
-
-        values.append(str(post_id))
-        query = f"UPDATE posts SET {', '.join(updates)} WHERE id = ? RETURNING id, title, body"
-
-        c.execute(query, values)
-        post = c.fetchone()
-
-    conn.commit()
-    logger.debug(f"Updated post with data: {post}")
-
-    return {"id": UUID(post[0]), "title": post[1], "body": post[2]}
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Post not found"
+        )
+    
+    return Post(
+        id=post[0],
+        title=post[1],
+        body=post[2],
+        user_id=post[3],
+        created_at=datetime.fromisoformat(post[4]) if post[4] else datetime.utcnow()
+    )
 
 
-@router.delete("/{post_id}", summary="Delete a blog post")
-def delete_post(post_id: UUID, conn=Depends(get_db)):
-    c = conn.cursor()
-    c.execute("DELETE FROM posts WHERE id = ?", (str(post_id),))
-    conn.commit()
+@router.get("/user/{user_id}", response_model=List[Post])
+async def get_user_posts(user_id: str, db: Connection = Depends(get_db)):
+    """Get all posts by a specific user."""
+    cursor = db.cursor()
+    
+    # Check if user exists
+    cursor.execute("SELECT id FROM users WHERE user_id = ?", (user_id,))
+    if not cursor.fetchone():
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    # Get user's posts
+    cursor.execute("SELECT * FROM posts WHERE user_id = ? ORDER BY created_at DESC", (user_id,))
+    posts = cursor.fetchall()
+    return [
+        Post(
+            id=post[0],
+            title=post[1],
+            body=post[2],
+            user_id=post[3],
+            created_at=datetime.fromisoformat(post[4]) if post[4] else datetime.utcnow()
+        )
+        for post in posts
+    ]
 
-    if c.rowcount == 0:
-        raise HTTPException(status_code=404, detail="Post not found")
 
-    return {"message": f"Post {post_id} deleted successfully"}
+@router.put("/{post_id}", response_model=Post)
+async def update_post(post_id: int, post_update: PostUpdate, db: Connection = Depends(get_db)):
+    """Update a post."""
+    cursor = db.cursor()
+    
+    # Check if post exists
+    cursor.execute("SELECT * FROM posts WHERE id = ?", (post_id,))
+    existing_post = cursor.fetchone()
+    if not existing_post:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Post not found"
+        )
+    
+    # Update post fields
+    update_fields = []
+    values = []
+    if post_update.title is not None:
+        update_fields.append("title = ?")
+        values.append(post_update.title)
+    if post_update.body is not None:
+        update_fields.append("body = ?")
+        values.append(post_update.body)
+    
+    if not update_fields:
+        return Post(
+            id=existing_post[0],
+            title=existing_post[1],
+            body=existing_post[2],
+            user_id=existing_post[3],
+            created_at=datetime.fromisoformat(existing_post[4]) if existing_post[4] else datetime.utcnow()
+        )
+    
+    values.append(post_id)
+    query = f"UPDATE posts SET {', '.join(update_fields)} WHERE id = ?"
+    cursor.execute(query, values)
+    db.commit()
+    
+    # Fetch updated post
+    cursor.execute("SELECT * FROM posts WHERE id = ?", (post_id,))
+    updated_post = cursor.fetchone()
+    return Post(
+        id=updated_post[0],
+        title=updated_post[1],
+        body=updated_post[2],
+        user_id=updated_post[3],
+        created_at=datetime.fromisoformat(updated_post[4]) if updated_post[4] else datetime.utcnow()
+    )
+
+
+@router.delete("/{post_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_post(post_id: int, db: Connection = Depends(get_db)):
+    """Delete a post."""
+    cursor = db.cursor()
+    
+    # Check if post exists
+    cursor.execute("SELECT id FROM posts WHERE id = ?", (post_id,))
+    if not cursor.fetchone():
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Post not found"
+        )
+    
+    # Delete post
+    cursor.execute("DELETE FROM posts WHERE id = ?", (post_id,))
+    db.commit()
+    return None

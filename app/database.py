@@ -13,24 +13,39 @@ def init_db():
     # Drop existing tables to ensure clean state
     c.execute("DROP TABLE IF EXISTS posts")
     c.execute("DROP TABLE IF EXISTS todos")
+    c.execute("DROP TABLE IF EXISTS users")
+
+    # Create users table with auto-incrementing ID and UUID user_id
+    c.execute(
+        """
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            email TEXT NOT NULL UNIQUE,
+            user_id TEXT NOT NULL UNIQUE DEFAULT (lower(hex(randomblob(16))))
+        )
+    """
+    )
 
     # Create todos table
     c.execute(
         """
         CREATE TABLE IF NOT EXISTS todos (
-            id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
             task TEXT NOT NULL
         )
     """
     )
 
-    # Create posts table with auto-generated UUID
+    # Create posts table with auto-incrementing ID
     c.execute(
         """
         CREATE TABLE IF NOT EXISTS posts (
-            id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT NOT NULL,
-            body TEXT NOT NULL
+            body TEXT NOT NULL,
+            user_id TEXT NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users(user_id)
         )
     """
     )
