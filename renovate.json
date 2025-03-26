@@ -17,6 +17,12 @@
       "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
       "matchCurrentVersion": "!/^0/",
       "automerge": true
+    },
+    {
+      "description": "Leave Python version",
+      "matchManagers": ["npm"],
+      "matchPackagePatterns": ["python"],
+      "allowedVersions": "^3.11"
     }
   ]
 }
