@@ -1,32 +1,43 @@
-from uuid import UUID
+"""Pydantic models for todo data validation."""
+
 from typing import List, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class TodoBase(BaseModel):
-    task: str
+    """Base todo model with common attributes."""
+
+    task: str = Field(..., min_length=1, max_length=500)
 
 
 class TodoCreate(TodoBase):
-    class Config:
+    """Model for creating a new todo."""
 
-        schema_extra = {"example": {"task": "Buy groceries"}}
+    class Config:
+        json_schema_extra = {"example": {"task": "Buy groceries"}}
 
 
 class TodoUpdate(BaseModel):
-    task: Optional[str] = None
+    """Model for updating todo data."""
+
+    task: Optional[str] = Field(None, min_length=1, max_length=500)
 
     class Config:
-        schema_extra = {"example": {"task": "Buy more groceries"}}
+        json_schema_extra = {"example": {"task": "Updated task"}}
 
 
 class Todo(TodoBase):
-    id: UUID
+    """Model for todo data including ID."""
+
+    id: int
 
     class Config:
-        schema_extra = {
-            "example": {"id": "123e4567-e89b-12d3-a456-426614174000", "task": "Buy groceries"}
+        """Pydantic config for ORM mode."""
+
+        json_schema_extra = {
+            "example": {"id": 1, "task": "Buy groceries"}
         }
+        from_attributes = True
 
 
 class TodoList(BaseModel):
