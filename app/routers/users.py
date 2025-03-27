@@ -29,18 +29,18 @@ async def create_user(user: UserCreate):
             )
 
         # Create new user with UUID
-        user_id = str(uuid.uuid4())
+        userId = str(uuid.uuid4())
         cursor.execute(
-            "INSERT INTO users (name, email, user_id) VALUES (?, ?, ?)",
-            (user.name, user.email, user_id),
+            "INSERT INTO users (name, email, userId) VALUES (?, ?, ?)",
+            (user.name, user.email, userId),
         )
         db.commit()
 
         # Fetch the created user
-        cursor.execute("SELECT * FROM users WHERE user_id = ?", (user_id,))
+        cursor.execute("SELECT * FROM users WHERE userId = ?", (userId,))
         user_data = cursor.fetchone()
         return User(
-            id=user_data[0], name=user_data[1], email=user_data[2], user_id=user_data[3]
+            id=user_data[0], name=user_data[1], email=user_data[2], userId=user_data[3]
         )
 
 
@@ -52,17 +52,17 @@ async def get_users():
         cursor.execute("SELECT * FROM users")
         users = cursor.fetchall()
         return [
-            User(id=user[0], name=user[1], email=user[2], user_id=user[3])
+            User(id=user[0], name=user[1], email=user[2], userId=user[3])
             for user in users
         ]
 
 
-@router.get("/{user_id}", response_model=User)
-async def get_user(user_id: str):
-    """Get a specific user by user_id."""
+@router.get("/{userId}", response_model=User)
+async def get_user(userId: str):
+    """Get a specific user by userId."""
     with get_db() as db:
         cursor = db.cursor()
-        cursor.execute("SELECT * FROM users WHERE user_id = ?", (user_id,))
+        cursor.execute("SELECT * FROM users WHERE userId = ?", (userId,))
         user = cursor.fetchone()
 
         if not user:
@@ -70,17 +70,17 @@ async def get_user(user_id: str):
                 status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
             )
 
-        return User(id=user[0], name=user[1], email=user[2], user_id=user[3])
+        return User(id=user[0], name=user[1], email=user[2], userId=user[3])
 
 
-@router.put("/{user_id}", response_model=User)
-async def update_user(user_id: str, user_update: UserUpdate):
+@router.put("/{userId}", response_model=User)
+async def update_user(userId: str, user_update: UserUpdate):
     """Update a user's information."""
     with get_db() as db:
         cursor = db.cursor()
 
         # Check if user exists
-        cursor.execute("SELECT * FROM users WHERE user_id = ?", (user_id,))
+        cursor.execute("SELECT * FROM users WHERE userId = ?", (userId,))
         existing_user = cursor.fetchone()
         if not existing_user:
             raise HTTPException(
@@ -111,39 +111,39 @@ async def update_user(user_id: str, user_update: UserUpdate):
                 id=existing_user[0],
                 name=existing_user[1],
                 email=existing_user[2],
-                user_id=existing_user[3],
+                userId=existing_user[3],
             )
 
-        values.append(user_id)
-        query = f"UPDATE users SET {', '.join(update_fields)} WHERE user_id = ?"
+        values.append(userId)
+        query = f"UPDATE users SET {', '.join(update_fields)} WHERE userId = ?"
         cursor.execute(query, values)
         db.commit()
 
         # Fetch updated user
-        cursor.execute("SELECT * FROM users WHERE user_id = ?", (user_id,))
+        cursor.execute("SELECT * FROM users WHERE userId = ?", (userId,))
         updated_user = cursor.fetchone()
         return User(
             id=updated_user[0],
             name=updated_user[1],
             email=updated_user[2],
-            user_id=updated_user[3],
+            userId=updated_user[3],
         )
 
 
-@router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_user(user_id: str):
+@router.delete("/{userId}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_user(userId: str):
     """Delete a user."""
     with get_db() as db:
         cursor = db.cursor()
 
         # Check if user exists
-        cursor.execute("SELECT id FROM users WHERE user_id = ?", (user_id,))
+        cursor.execute("SELECT id FROM users WHERE userId = ?", (userId,))
         if not cursor.fetchone():
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
             )
 
         # Delete user
-        cursor.execute("DELETE FROM users WHERE user_id = ?", (user_id,))
+        cursor.execute("DELETE FROM users WHERE userId = ?", (userId,))
         db.commit()
         return None

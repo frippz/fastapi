@@ -17,14 +17,14 @@ def init_db():
         cursor.execute("DROP TABLE IF EXISTS todos")
         cursor.execute("DROP TABLE IF EXISTS users")
 
-        # Create users table with auto-incrementing ID and UUID user_id
+        # Create users table with auto-incrementing ID and UUID userId
         cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL,
                 email TEXT NOT NULL UNIQUE,
-                user_id TEXT NOT NULL UNIQUE DEFAULT (lower(hex(randomblob(16))))
+                userId TEXT NOT NULL UNIQUE DEFAULT (lower(hex(randomblob(16))))
             )
         """
         )
@@ -39,16 +39,16 @@ def init_db():
         """
         )
 
-        # Create posts table with auto-incrementing ID and created_at timestamp
+        # Create posts table with auto-incrementing ID and createdAt timestamp
         cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS posts (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 title TEXT NOT NULL,
                 body TEXT NOT NULL,
-                user_id TEXT NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (user_id) REFERENCES users(user_id)
+                userId TEXT NOT NULL,
+                createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (userId) REFERENCES users(userId)
             )
         """
         )

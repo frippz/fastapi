@@ -15,14 +15,14 @@ class PostBase(BaseModel):
 class PostCreate(PostBase):
     """Model for creating a new post."""
 
-    user_id: str
+    userId: str
 
     class Config:
         json_schema_extra = {
             "example": {
                 "title": "My First Blog Post",
                 "body": "This is the content of my first blog post.",
-                "user_id": "123e4567-e89b-12d3-a456-426614174000",
+                "userId": "123e4567-e89b-12d3-a456-426614174000",
             }
         }
 
@@ -31,8 +31,8 @@ class Post(PostBase):
     """Model for post data including IDs and timestamps."""
 
     id: int
-    user_id: str
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    userId: str
+    createdAt: datetime = Field(default_factory=datetime.utcnow)
 
     class Config:
         json_schema_extra = {
@@ -40,8 +40,8 @@ class Post(PostBase):
                 "id": 1,
                 "title": "My First Blog Post",
                 "body": "This is the content of my first blog post.",
-                "user_id": "123e4567-e89b-12d3-a456-426614174000",
-                "created_at": "2024-03-26T12:00:00",
+                "userId": "123e4567-e89b-12d3-a456-426614174000",
+                "createdAt": "2024-03-26T12:00:00",
             }
         }
         from_attributes = True

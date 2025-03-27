@@ -20,7 +20,7 @@ async def create_post(post: PostCreate):
         cursor = db.cursor()
 
         # Check if user exists
-        cursor.execute("SELECT id FROM users WHERE user_id = ?", (post.user_id,))
+        cursor.execute("SELECT id FROM users WHERE userId = ?", (post.userId,))
         if not cursor.fetchone():
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
@@ -28,8 +28,8 @@ async def create_post(post: PostCreate):
 
         # Create new post
         cursor.execute(
-            "INSERT INTO posts (title, body, user_id) VALUES (?, ?, ?)",
-            (post.title, post.body, post.user_id),
+            "INSERT INTO posts (title, body, userId) VALUES (?, ?, ?)",
+            (post.title, post.body, post.userId),
         )
         db.commit()
 
@@ -40,8 +40,8 @@ async def create_post(post: PostCreate):
             id=post_data[0],
             title=post_data[1],
             body=post_data[2],
-            user_id=post_data[3],
-            created_at=(
+            userId=post_data[3],
+            createdAt=(
                 datetime.fromisoformat(post_data[4])
                 if post_data[4]
                 else datetime.now(UTC)
@@ -54,15 +54,15 @@ async def get_posts():
     """Get all posts."""
     with get_db() as db:
         cursor = db.cursor()
-        cursor.execute("SELECT * FROM posts ORDER BY created_at DESC")
+        cursor.execute("SELECT * FROM posts ORDER BY createdAt DESC")
         posts = cursor.fetchall()
         return [
             Post(
                 id=post[0],
                 title=post[1],
                 body=post[2],
-                user_id=post[3],
-                created_at=datetime.fromisoformat(post[4])
+                userId=post[3],
+                createdAt=datetime.fromisoformat(post[4])
                 if post[4]
                 else datetime.now(UTC),
             )
@@ -87,21 +87,19 @@ async def get_post(post_id: int):
             id=post[0],
             title=post[1],
             body=post[2],
-            user_id=post[3],
-            created_at=datetime.fromisoformat(post[4])
-            if post[4]
-            else datetime.now(UTC),
+            userId=post[3],
+            createdAt=datetime.fromisoformat(post[4]) if post[4] else datetime.now(UTC),
         )
 
 
-@router.get("/user/{user_id}", response_model=List[Post])
-async def get_user_posts(user_id: str):
+@router.get("/user/{userId}", response_model=List[Post])
+async def get_user_posts(userId: str):
     """Get all posts by a specific user."""
     with get_db() as db:
         cursor = db.cursor()
 
         # Check if user exists
-        cursor.execute("SELECT id FROM users WHERE user_id = ?", (user_id,))
+        cursor.execute("SELECT id FROM users WHERE userId = ?", (userId,))
         if not cursor.fetchone():
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
@@ -109,7 +107,7 @@ async def get_user_posts(user_id: str):
 
         # Get user's posts
         cursor.execute(
-            "SELECT * FROM posts WHERE user_id = ? ORDER BY created_at DESC", (user_id,)
+            "SELECT * FROM posts WHERE userId = ? ORDER BY createdAt DESC", (userId,)
         )
         posts = cursor.fetchall()
         return [
@@ -117,8 +115,8 @@ async def get_user_posts(user_id: str):
                 id=post[0],
                 title=post[1],
                 body=post[2],
-                user_id=post[3],
-                created_at=datetime.fromisoformat(post[4])
+                userId=post[3],
+                createdAt=datetime.fromisoformat(post[4])
                 if post[4]
                 else datetime.now(UTC),
             )
@@ -155,8 +153,8 @@ async def update_post(post_id: int, post_update: PostUpdate):
                 id=existing_post[0],
                 title=existing_post[1],
                 body=existing_post[2],
-                user_id=existing_post[3],
-                created_at=(
+                userId=existing_post[3],
+                createdAt=(
                     datetime.fromisoformat(existing_post[4])
                     if existing_post[4]
                     else datetime.now(UTC)
@@ -175,8 +173,8 @@ async def update_post(post_id: int, post_update: PostUpdate):
             id=updated_post[0],
             title=updated_post[1],
             body=updated_post[2],
-            user_id=updated_post[3],
-            created_at=(
+            userId=updated_post[3],
+            createdAt=(
                 datetime.fromisoformat(updated_post[4])
                 if updated_post[4]
                 else datetime.now(UTC)

@@ -24,7 +24,7 @@ class User(UserBase):
     """Model for user data including IDs."""
 
     id: int
-    user_id: str
+    userId: str
 
     class Config:
         json_schema_extra = {
@@ -32,7 +32,7 @@ class User(UserBase):
                 "id": 1,
                 "name": "John Doe",
                 "email": "john@example.com",
-                "user_id": "123e4567-e89b-12d3-a456-426614174000",
+                "userId": "123e4567-e89b-12d3-a456-426614174000",
             }
         }
         from_attributes = True
