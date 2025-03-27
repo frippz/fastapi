@@ -4,6 +4,7 @@ import sqlite3
 from contextlib import contextmanager
 from typing import Generator
 
+
 def init_db():
     """
     Initialize the database with required tables.

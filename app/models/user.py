@@ -15,7 +15,9 @@ class UserCreate(UserBase):
     """Model for creating a new user."""
 
     class Config:
-        json_schema_extra = {"example": {"name": "John Doe", "email": "john@example.com"}}
+        json_schema_extra = {
+            "example": {"name": "John Doe", "email": "john@example.com"}
+        }
 
 
 class User(UserBase):
@@ -43,4 +45,6 @@ class UserUpdate(BaseModel):
     email: Optional[EmailStr] = None
 
     class Config:
-        json_schema_extra = {"example": {"name": "John Smith", "email": "john.smith@example.com"}}
+        json_schema_extra = {
+            "example": {"name": "John Smith", "email": "john.smith@example.com"}
+        }

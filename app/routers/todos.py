@@ -45,7 +45,9 @@ async def get_todo(todo_id: int):
         todo = cursor.fetchone()
 
         if not todo:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Todo not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Todo not found"
+            )
 
         return Todo(id=todo[0], task=todo[1])
 
@@ -60,11 +62,15 @@ async def update_todo(todo_id: int, todo_update: TodoUpdate):
         cursor.execute("SELECT * FROM todos WHERE id = ?", (todo_id,))
         existing_todo = cursor.fetchone()
         if not existing_todo:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Todo not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Todo not found"
+            )
 
         # Update todo fields
         if todo_update.task is not None:
-            cursor.execute("UPDATE todos SET task = ? WHERE id = ?", (todo_update.task, todo_id))
+            cursor.execute(
+                "UPDATE todos SET task = ? WHERE id = ?", (todo_update.task, todo_id)
+            )
             db.commit()
 
             # Fetch updated todo
@@ -84,7 +90,9 @@ async def delete_todo(todo_id: int):
         # Check if todo exists
         cursor.execute("SELECT id FROM todos WHERE id = ?", (todo_id,))
         if not cursor.fetchone():
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Todo not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Todo not found"
+            )
 
         # Delete todo
         cursor.execute("DELETE FROM todos WHERE id = ?", (todo_id,))

@@ -24,7 +24,8 @@ async def create_user(user: UserCreate):
         cursor.execute("SELECT id FROM users WHERE email = ?", (user.email,))
         if cursor.fetchone():
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered"
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email already registered",
             )
 
         # Create new user with UUID
@@ -38,7 +39,9 @@ async def create_user(user: UserCreate):
         # Fetch the created user
         cursor.execute("SELECT * FROM users WHERE user_id = ?", (user_id,))
         user_data = cursor.fetchone()
-        return User(id=user_data[0], name=user_data[1], email=user_data[2], user_id=user_data[3])
+        return User(
+            id=user_data[0], name=user_data[1], email=user_data[2], user_id=user_data[3]
+        )
 
 
 @router.get("/", response_model=List[User])
@@ -48,7 +51,10 @@ async def get_users():
         cursor = db.cursor()
         cursor.execute("SELECT * FROM users")
         users = cursor.fetchall()
-        return [User(id=user[0], name=user[1], email=user[2], user_id=user[3]) for user in users]
+        return [
+            User(id=user[0], name=user[1], email=user[2], user_id=user[3])
+            for user in users
+        ]
 
 
 @router.get("/{user_id}", response_model=User)
@@ -60,7 +66,9 @@ async def get_user(user_id: str):
         user = cursor.fetchone()
 
         if not user:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+            )
 
         return User(id=user[0], name=user[1], email=user[2], user_id=user[3])
 
@@ -75,14 +83,17 @@ async def update_user(user_id: str, user_update: UserUpdate):
         cursor.execute("SELECT * FROM users WHERE user_id = ?", (user_id,))
         existing_user = cursor.fetchone()
         if not existing_user:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+            )
 
         # Check if new email is already taken
         if user_update.email and user_update.email != existing_user[2]:
             cursor.execute("SELECT id FROM users WHERE email = ?", (user_update.email,))
             if cursor.fetchone():
                 raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered"
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Email already registered",
                 )
 
         # Update user fields
@@ -112,7 +123,10 @@ async def update_user(user_id: str, user_update: UserUpdate):
         cursor.execute("SELECT * FROM users WHERE user_id = ?", (user_id,))
         updated_user = cursor.fetchone()
         return User(
-            id=updated_user[0], name=updated_user[1], email=updated_user[2], user_id=updated_user[3]
+            id=updated_user[0],
+            name=updated_user[1],
+            email=updated_user[2],
+            user_id=updated_user[3],
         )
 
 
@@ -125,7 +139,9 @@ async def delete_user(user_id: str):
         # Check if user exists
         cursor.execute("SELECT id FROM users WHERE user_id = ?", (user_id,))
         if not cursor.fetchone():
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+            )
 
         # Delete user
         cursor.execute("DELETE FROM users WHERE user_id = ?", (user_id,))

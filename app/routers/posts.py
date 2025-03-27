@@ -3,7 +3,6 @@
 from fastapi import APIRouter, HTTPException, status
 from typing import List
 from datetime import datetime, UTC
-
 from app.database import get_db
 from app.models.post import Post, PostCreate, PostUpdate
 
@@ -23,7 +22,9 @@ async def create_post(post: PostCreate):
         # Check if user exists
         cursor.execute("SELECT id FROM users WHERE user_id = ?", (post.user_id,))
         if not cursor.fetchone():
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+            )
 
         # Create new post
         cursor.execute(
@@ -41,7 +42,9 @@ async def create_post(post: PostCreate):
             body=post_data[2],
             user_id=post_data[3],
             created_at=(
-                datetime.fromisoformat(post_data[4]) if post_data[4] else datetime.now(UTC)
+                datetime.fromisoformat(post_data[4])
+                if post_data[4]
+                else datetime.now(UTC)
             ),
         )
 
@@ -59,7 +62,9 @@ async def get_posts():
                 title=post[1],
                 body=post[2],
                 user_id=post[3],
-                created_at=datetime.fromisoformat(post[4]) if post[4] else datetime.now(UTC),
+                created_at=datetime.fromisoformat(post[4])
+                if post[4]
+                else datetime.now(UTC),
             )
             for post in posts
         ]
@@ -74,14 +79,18 @@ async def get_post(post_id: int):
         post = cursor.fetchone()
 
         if not post:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Post not found"
+            )
 
         return Post(
             id=post[0],
             title=post[1],
             body=post[2],
             user_id=post[3],
-            created_at=datetime.fromisoformat(post[4]) if post[4] else datetime.now(UTC),
+            created_at=datetime.fromisoformat(post[4])
+            if post[4]
+            else datetime.now(UTC),
         )
 
 
@@ -94,10 +103,14 @@ async def get_user_posts(user_id: str):
         # Check if user exists
         cursor.execute("SELECT id FROM users WHERE user_id = ?", (user_id,))
         if not cursor.fetchone():
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+            )
 
         # Get user's posts
-        cursor.execute("SELECT * FROM posts WHERE user_id = ? ORDER BY created_at DESC", (user_id,))
+        cursor.execute(
+            "SELECT * FROM posts WHERE user_id = ? ORDER BY created_at DESC", (user_id,)
+        )
         posts = cursor.fetchall()
         return [
             Post(
@@ -105,7 +118,9 @@ async def get_user_posts(user_id: str):
                 title=post[1],
                 body=post[2],
                 user_id=post[3],
-                created_at=datetime.fromisoformat(post[4]) if post[4] else datetime.now(UTC),
+                created_at=datetime.fromisoformat(post[4])
+                if post[4]
+                else datetime.now(UTC),
             )
             for post in posts
         ]
@@ -121,7 +136,9 @@ async def update_post(post_id: int, post_update: PostUpdate):
         cursor.execute("SELECT * FROM posts WHERE id = ?", (post_id,))
         existing_post = cursor.fetchone()
         if not existing_post:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Post not found"
+            )
 
         # Update post fields
         update_fields = []
@@ -160,7 +177,9 @@ async def update_post(post_id: int, post_update: PostUpdate):
             body=updated_post[2],
             user_id=updated_post[3],
             created_at=(
-                datetime.fromisoformat(updated_post[4]) if updated_post[4] else datetime.now(UTC)
+                datetime.fromisoformat(updated_post[4])
+                if updated_post[4]
+                else datetime.now(UTC)
             ),
         )
 
@@ -174,7 +193,9 @@ async def delete_post(post_id: int):
         # Check if post exists
         cursor.execute("SELECT id FROM posts WHERE id = ?", (post_id,))
         if not cursor.fetchone():
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Post not found"
+            )
 
         # Delete post
         cursor.execute("DELETE FROM posts WHERE id = ?", (post_id,))
