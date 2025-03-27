@@ -9,15 +9,6 @@ from .routers.users import router as users_router
 # Initialize FastAPI with metadata
 app = FastAPI(
     title="Fredrik’s FastAPI",
-    description="""
-    A RESTful API for managing users, blog posts, and todos.
-    
-    Features:
-    * User management with UUID-based identification
-    * Blog post creation and management
-    * Todo list management
-    * Proper error handling and validation
-    """,
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
