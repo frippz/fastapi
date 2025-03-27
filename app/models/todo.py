@@ -2,19 +2,26 @@
 
 from typing import List, Optional
 from pydantic import BaseModel, Field
+
+
 class TodoBase(BaseModel):
     """Base todo model with common attributes."""
+
     task: str = Field(..., min_length=1, max_length=500)
+
 
 class TodoCreate(TodoBase):
     """Model for creating a new todo."""
+
     class Config:
         json_schema_extra = {"example": {"task": "Buy groceries"}}
 
 
 class TodoUpdate(BaseModel):
     """Model for updating todo data."""
+
     task: Optional[str] = Field(None, min_length=1, max_length=500)
+
     class Config:
         json_schema_extra = {"example": {"task": "Updated task"}}
 
