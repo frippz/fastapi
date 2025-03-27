@@ -12,14 +12,12 @@ python = "3.11.1"
 fastapi = "0.115.12"
 uvicorn = "0.34.0"
 pydantic = "2.10.6"
-pylint = "3.3.6"
 email-validator = "2.2.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "7.4.4"
 httpx = "0.28.1"
-black = "23.12.1"
-flake8 = "6.1.0"
+ruff = "^0.11.2"
 
 [build-system]
 requires = ["poetry-core==2.1.1"]

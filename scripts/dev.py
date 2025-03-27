@@ -9,12 +9,12 @@ def start():
 
 def lint():
     """Run linter."""
-    subprocess.run(["flake8", "app", "tests"])
+    subprocess.run(["ruff", "check"])
 
 
 def format():
     """Format code."""
-    subprocess.run(["black", "app"])
+    subprocess.run(["ruff", "format"])
 
 
 if __name__ == "__main__":
