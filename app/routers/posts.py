@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter, HTTPException, status
 from typing import List
-from datetime import datetime
+from datetime import datetime, UTC
 
 from app.database import get_db
 from app.models.post import Post, PostCreate, PostUpdate
@@ -40,7 +40,9 @@ async def create_post(post: PostCreate):
             title=post_data[1],
             body=post_data[2],
             user_id=post_data[3],
-            created_at=datetime.fromisoformat(post_data[4]) if post_data[4] else datetime.utcnow(),
+            created_at=(
+                datetime.fromisoformat(post_data[4]) if post_data[4] else datetime.now(UTC)
+            ),
         )
 
 
@@ -57,7 +59,7 @@ async def get_posts():
                 title=post[1],
                 body=post[2],
                 user_id=post[3],
-                created_at=datetime.fromisoformat(post[4]) if post[4] else datetime.utcnow(),
+                created_at=datetime.fromisoformat(post[4]) if post[4] else datetime.now(UTC),
             )
             for post in posts
         ]
@@ -79,7 +81,7 @@ async def get_post(post_id: int):
             title=post[1],
             body=post[2],
             user_id=post[3],
-            created_at=datetime.fromisoformat(post[4]) if post[4] else datetime.utcnow(),
+            created_at=datetime.fromisoformat(post[4]) if post[4] else datetime.now(UTC),
         )
 
 
@@ -103,7 +105,7 @@ async def get_user_posts(user_id: str):
                 title=post[1],
                 body=post[2],
                 user_id=post[3],
-                created_at=datetime.fromisoformat(post[4]) if post[4] else datetime.utcnow(),
+                created_at=datetime.fromisoformat(post[4]) if post[4] else datetime.now(UTC),
             )
             for post in posts
         ]
@@ -140,7 +142,7 @@ async def update_post(post_id: int, post_update: PostUpdate):
                 created_at=(
                     datetime.fromisoformat(existing_post[4])
                     if existing_post[4]
-                    else datetime.utcnow()
+                    else datetime.now(UTC)
                 ),
             )
 
@@ -158,7 +160,7 @@ async def update_post(post_id: int, post_update: PostUpdate):
             body=updated_post[2],
             user_id=updated_post[3],
             created_at=(
-                datetime.fromisoformat(updated_post[4]) if updated_post[4] else datetime.utcnow()
+                datetime.fromisoformat(updated_post[4]) if updated_post[4] else datetime.now(UTC)
             ),
         )
 
