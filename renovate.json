@@ -21,7 +21,8 @@
     {
       "matchManagers": ["poetry"],
       "matchPackageNames": ["python"],
-      "rangeStrategy": "replace"
+      "rangeStrategy": "replace",
+      "allowedVersions": "<=3.11"
     }
   ]
 }
