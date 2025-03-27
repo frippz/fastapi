@@ -1,4 +1,4 @@
-name: Test FastAPI Application
+name: Test
 
 on:
   pull_request:
