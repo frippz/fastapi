@@ -38,6 +38,7 @@ app.include_router(users_router)
 app.include_router(posts_router)
 app.include_router(todos_router)
 
+
 @app.get("/")
 async def root():
     """Root endpoint returning API information."""
@@ -46,5 +47,5 @@ async def root():
         "version": "1.0.0",
         "docs_url": "/docs",
         "redoc_url": "/redoc",
-        "openapi_url": "/openapi.json"
+        "openapi_url": "/openapi.json",
     }

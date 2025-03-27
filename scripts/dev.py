@@ -14,7 +14,7 @@ def lint():
 
 def format():
     """Format code."""
-    subprocess.run(["black", "app", "tests"])
+    subprocess.run(["black", "app"])
 
 
 if __name__ == "__main__":

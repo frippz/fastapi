@@ -22,7 +22,7 @@ class PostCreate(PostBase):
             "example": {
                 "title": "My First Blog Post",
                 "body": "This is the content of my first blog post.",
-                "user_id": "123e4567-e89b-12d3-a456-426614174000"
+                "user_id": "123e4567-e89b-12d3-a456-426614174000",
             }
         }
 
@@ -41,7 +41,7 @@ class Post(PostBase):
                 "title": "My First Blog Post",
                 "body": "This is the content of my first blog post.",
                 "user_id": "123e4567-e89b-12d3-a456-426614174000",
-                "created_at": "2024-03-26T12:00:00"
+                "created_at": "2024-03-26T12:00:00",
             }
         }
         from_attributes = True
@@ -57,6 +57,6 @@ class PostUpdate(BaseModel):
         json_schema_extra = {
             "example": {
                 "title": "Updated Blog Post Title",
-                "body": "Updated content of the blog post."
+                "body": "Updated content of the blog post.",
             }
         }
