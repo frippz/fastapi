@@ -1,41 +1,45 @@
-"""Pydantic models for todo data validation."""
+"""Todo models."""
 
 from typing import List, Optional
 from pydantic import BaseModel, Field
 
 
 class TodoBase(BaseModel):
-    """Base todo model with common attributes."""
+    """Base todo model."""
 
-    task: str = Field(..., min_length=1, max_length=500)
+    task: str = Field(..., min_length=1, max_length=200)
+    completed: bool = False
 
 
 class TodoCreate(TodoBase):
     """Model for creating a new todo."""
 
-    class Config:
-        json_schema_extra = {"example": {"task": "Buy groceries"}}
+    pass
 
 
 class TodoUpdate(BaseModel):
-    """Model for updating todo data."""
+    """Model for updating a todo."""
 
-    task: Optional[str] = Field(None, min_length=1, max_length=500)
-
-    class Config:
-        json_schema_extra = {"example": {"task": "Updated task"}}
+    task: Optional[str] = Field(None, min_length=1, max_length=200)
+    completed: Optional[bool] = None
 
 
 class Todo(TodoBase):
-    """Model for todo data including ID."""
+    """Todo model."""
 
     id: int
 
     class Config:
-        """Pydantic config for ORM mode."""
+        """Pydantic config."""
 
-        json_schema_extra = {"example": {"id": 1, "task": "Buy groceries"}}
         from_attributes = True
+        json_schema_extra = {
+            "example": {
+                "id": 1,
+                "task": "Buy groceries",
+                "completed": False,
+            }
+        }
 
 
 class TodoList(BaseModel):

@@ -1,18 +1,16 @@
-"""Main FastAPI application module that configures and initializes the API."""
+"""Main application module."""
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routers.posts import router as posts_router
-from .routers.todos import router as todos_router
-from .routers.users import router as users_router
+
+from app.routers import posts, todos, users
+from app.database import init_db
 
 # Initialize FastAPI with metadata
 app = FastAPI(
-    title="Fredrik’s FastAPI",
+    title="FastAPI Demo",
+    description="A simple FastAPI application with posts, todos, and users.",
     version="1.0.0",
-    docs_url="/docs",
-    redoc_url="/redoc",
-    openapi_url="/openapi.json",
 )
 
 # Enable CORS
@@ -25,9 +23,12 @@ app.add_middleware(
 )
 
 # Include routers
-app.include_router(users_router)
-app.include_router(posts_router)
-app.include_router(todos_router)
+app.include_router(users.router)
+app.include_router(posts.router)
+app.include_router(todos.router)
+
+# Initialize database on startup
+init_db()
 
 
 @app.get("/")

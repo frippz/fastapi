@@ -1,11 +1,11 @@
-"""Pydantic models for user data validation."""
+"""User models."""
 
-from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
+from pydantic import BaseModel, Field, EmailStr
 
 
 class UserBase(BaseModel):
-    """Base user model with common attributes."""
+    """Base user model."""
 
     name: str = Field(..., min_length=1, max_length=100)
     email: EmailStr
@@ -14,28 +14,27 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     """Model for creating a new user."""
 
-    class Config:
-        json_schema_extra = {
-            "example": {"name": "John Doe", "email": "john@example.com"}
-        }
+    pass
 
 
 class User(UserBase):
-    """Model for user data including IDs."""
+    """User model."""
 
     id: int
     userId: str
 
     class Config:
+        """Pydantic config."""
+
+        from_attributes = True
         json_schema_extra = {
             "example": {
                 "id": 1,
-                "name": "John Doe",
-                "email": "john@example.com",
+                "name": "Firstname Lastname",
+                "email": "name@domain.com",
                 "userId": "123e4567-e89b-12d3-a456-426614174000",
             }
         }
-        from_attributes = True
 
 
 class UserUpdate(BaseModel):

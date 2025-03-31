@@ -1,14 +1,14 @@
-"""Pydantic models for post data validation."""
+"""Post models."""
 
-from pydantic import BaseModel, Field
-from typing import Optional
 from datetime import datetime
+from typing import Optional
+from pydantic import BaseModel, Field
 
 from app.models.user import User
 
 
 class PostBase(BaseModel):
-    """Base post model with common attributes."""
+    """Base post model."""
 
     title: str = Field(..., min_length=1, max_length=200)
     body: str = Field(..., min_length=1)
@@ -66,12 +66,14 @@ class PostUpdate(BaseModel):
 
 class PostResponse(PostBase):
     """Post response model with author information."""
+
     id: int
     createdAt: datetime
     author: User
 
     class Config:
         """Pydantic config."""
+
         from_attributes = True
         json_schema_extra = {
             "example": {

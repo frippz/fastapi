@@ -1,7 +1,6 @@
-"""Router for todo operations."""
+"""Todos router."""
 
 from fastapi import APIRouter, HTTPException, status
-
 from app.database import get_db
 from app.models.todo import Todo, TodoCreate, TodoUpdate, TodoList
 
