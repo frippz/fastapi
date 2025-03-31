@@ -4,6 +4,8 @@ from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import datetime
 
+from app.models.user import User
+
 
 class PostBase(BaseModel):
     """Base post model with common attributes."""
@@ -15,7 +17,7 @@ class PostBase(BaseModel):
 class PostCreate(PostBase):
     """Model for creating a new post."""
 
-    userId: str
+    userId: str = Field(..., description="The ID of the user creating the post")
 
     class Config:
         json_schema_extra = {
@@ -32,7 +34,7 @@ class Post(PostBase):
 
     id: int
     userId: str
-    createdAt: datetime = Field(default_factory=datetime.utcnow)
+    createdAt: datetime = Field(default_factory=lambda: datetime.now())
 
     class Config:
         json_schema_extra = {
@@ -58,5 +60,30 @@ class PostUpdate(BaseModel):
             "example": {
                 "title": "Updated Blog Post Title",
                 "body": "Updated content of the blog post.",
+            }
+        }
+
+
+class PostResponse(PostBase):
+    """Post response model with author information."""
+    id: int
+    createdAt: datetime
+    author: User
+
+    class Config:
+        """Pydantic config."""
+        from_attributes = True
+        json_schema_extra = {
+            "example": {
+                "id": 1,
+                "title": "My First Blog Post",
+                "body": "This is the content of my first blog post.",
+                "createdAt": "2024-03-26T12:00:00",
+                "author": {
+                    "id": 1,
+                    "name": "Firstname Lastname",
+                    "email": "name@domain.com",
+                    "userId": "123e4567-e89b-12d3-a456-426614174000",
+                },
             }
         }
