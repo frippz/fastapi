@@ -1,7 +1,9 @@
-name: Test
+name: Test and Lint
 
 on:
   pull_request:
+    branches: [master]
+  push:
     branches: [master]
 
 jobs:
@@ -33,6 +35,17 @@ jobs:
           uv venv
           uv pip install -r requirements-dev.txt
         if: steps.cached-dependencies.outputs.cache-hit != 'true'
+
+      - name: Run tests
+        run: |
+          source .venv/bin/activate
+          pytest tests/ -v
+
+      - name: Run linting
+        run: |
+          source .venv/bin/activate
+          ruff check .
+          ruff format --check .
 
       - name: Verify application starts
         run: |
