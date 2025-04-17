@@ -1,7 +1,7 @@
 """Todo models."""
 
 from typing import List, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class TodoBase(BaseModel):
@@ -28,35 +28,35 @@ class Todo(TodoBase):
     """Todo model."""
 
     id: int
-
-    class Config:
-        """Pydantic config."""
-
-        from_attributes = True
-        json_schema_extra = {
+    model_config = ConfigDict(
+        from_attributes=True,
+        json_schema_extra={
             "example": {
                 "id": 1,
                 "task": "Buy groceries",
                 "completed": False,
             }
         }
+    )
 
 
 class TodoList(BaseModel):
     todos: List[Todo]
-
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "todos": [
                     {
-                        "id": "123e4567-e89b-12d3-a456-426614174000",
+                        "id": 1,
                         "task": "Buy groceries",
+                        "completed": False,
                     },
                     {
-                        "id": "123e4567-e89b-12d3-a456-426614174000",
+                        "id": 2,
                         "task": "Learn FastAPI",
+                        "completed": False,
                     },
                 ]
             }
         }
+    )
