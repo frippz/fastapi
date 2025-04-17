@@ -39,15 +39,15 @@ jobs:
       - name: Run tests
         run: |
           source .venv/bin/activate
-          pytest tests/ -v
+          PYTHONPATH=$PYTHONPATH:. pytest tests/ -v
 
       - name: Run linting
         run: |
           source .venv/bin/activate
-          ruff check .
-          ruff format --check .
+          PYTHONPATH=$PYTHONPATH:. ruff check .
+          PYTHONPATH=$PYTHONPATH:. ruff format --check .
 
       - name: Verify application starts
         run: |
           source .venv/bin/activate
-          python -c "from app.main import app; from fastapi.testclient import TestClient; client = TestClient(app); response = client.get('/'); assert response.status_code == 200"
+          PYTHONPATH=$PYTHONPATH:. python -c "from app.main import app; from fastapi.testclient import TestClient; client = TestClient(app); response = client.get('/'); assert response.status_code == 200"
