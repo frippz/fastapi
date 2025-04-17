@@ -4,20 +4,31 @@ A simple FastAPI application with user management, blog posts, and todo items. B
 
 ## Getting Started
 
-1. Create and activate a virtual environment:
+1. Install uv:
    ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   pip install uv
    ```
 
 2. Install dependencies:
    ```bash
-   pip install -r requirements.txt
+   # For production dependencies only
+   make install
+
+   # For development dependencies
+   make install-dev
    ```
 
 3. Run the application:
    ```bash
-   uvicorn app.main:app --reload
+   make start
    ```
 
-The API will be available at `http://localhost:8000`. Visit `http://localhost:8000/docs` for the interactive API documentation. 
+The API will be available at `http://localhost:8000`. Visit `http://localhost:8000/docs` for the interactive API documentation.
+
+## Development Commands
+
+- `make start` - Run the development server
+- `make lint` - Run linting checks
+- `make format` - Format code
+- `make test` - Run tests
+- `make clean` - Clean up generated files 
