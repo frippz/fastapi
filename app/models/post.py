@@ -45,7 +45,7 @@ class Post(PostBase):
                 "userId": "123e4567-e89b-12d3-a456-426614174000",
                 "createdAt": "2024-03-26T12:00:00",
             }
-        }
+        },
     )
 
 
@@ -85,5 +85,5 @@ class PostResponse(PostBase):
                     "userId": "123e4567-e89b-12d3-a456-426614174000",
                 },
             }
-        }
+        },
     )

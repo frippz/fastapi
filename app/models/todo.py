@@ -36,7 +36,7 @@ class Todo(TodoBase):
                 "task": "Buy groceries",
                 "completed": False,
             }
-        }
+        },
     )
 
 
