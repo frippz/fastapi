@@ -34,8 +34,7 @@ jobs:
         run: |
           uv venv
           uv pip install -r requirements-dev.txt
-          uv pip install pytest ruff
-        if: steps.cached-dependencies.outputs.cache-hit != 'true'
+        # if: steps.cached-dependencies.outputs.cache-hit != 'true'
 
       - name: Run tests
         run: |
