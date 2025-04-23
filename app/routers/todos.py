@@ -1,8 +1,9 @@
 """Todos router."""
 
 from fastapi import APIRouter, HTTPException, status
+from typing import List
 from app.database import get_db
-from app.models.todo import Todo, TodoCreate, TodoUpdate, TodoList
+from app.models.todo import Todo, TodoCreate, TodoUpdate
 
 router = APIRouter(
     prefix="/todos",
@@ -25,14 +26,14 @@ async def create_todo(todo: TodoCreate):
         return Todo(id=todo_data[0], task=todo_data[1])
 
 
-@router.get("/", response_model=TodoList)
+@router.get("/", response_model=List[Todo])
 async def get_todos():
     """Get all todos."""
     with get_db() as db:
         cursor = db.cursor()
         cursor.execute("SELECT * FROM todos ORDER BY id DESC")
         todos = cursor.fetchall()
-        return TodoList(todos=[Todo(id=todo[0], task=todo[1]) for todo in todos])
+        return [Todo(id=todo[0], task=todo[1]) for todo in todos]
 
 
 @router.get("/{todo_id}", response_model=Todo)
