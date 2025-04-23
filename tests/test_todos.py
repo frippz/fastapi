@@ -20,8 +20,8 @@ def test_get_todos(client):
     response = client.get("/todos/")
     assert response.status_code == 200
     data = response.json()
-    assert "todos" in data
-    assert isinstance(data["todos"], list)
-    assert len(data["todos"]) > 0
-    assert "task" in data["todos"][0]
-    assert "id" in data["todos"][0]
+    assert isinstance(data, list)
+    assert len(data) > 0
+    assert "task" in data[0]
+    assert "id" in data[0]
+    assert "completed" in data[0]
