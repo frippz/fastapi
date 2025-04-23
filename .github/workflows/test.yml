@@ -31,7 +31,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m venv .venv
           uv venv
           uv pip install -r requirements-dev.txt
         if: steps.cached-dependencies.outputs.cache-hit != 'true'
