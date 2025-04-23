@@ -19,8 +19,9 @@ jobs:
           python-version: "3.13.3"
 
       - name: Install uv
-        run: |
-          python -m pip install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.6.16"
 
       - name: Load cached dependencies
         id: cached-dependencies
@@ -31,23 +32,19 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m venv .venv
           uv venv
           uv pip install -r requirements-dev.txt
-        if: steps.cached-dependencies.outputs.cache-hit != 'true'
+        # if: steps.cached-dependencies.outputs.cache-hit != 'true'
 
       - name: Run tests
         run: |
-          source .venv/bin/activate
-          PYTHONPATH=$PYTHONPATH:. pytest tests/ -v
+          PYTHONPATH=$PYTHONPATH:. uv run pytest tests/ -v
 
       - name: Run linting
         run: |
-          source .venv/bin/activate
-          PYTHONPATH=$PYTHONPATH:. ruff check .
-          PYTHONPATH=$PYTHONPATH:. ruff format --check .
+          PYTHONPATH=$PYTHONPATH:. uv run ruff check .
+          PYTHONPATH=$PYTHONPATH:. uv run ruff format --check .
 
       - name: Verify application starts
         run: |
-          source .venv/bin/activate
-          PYTHONPATH=$PYTHONPATH:. python -c "from app.main import app; from fastapi.testclient import TestClient; client = TestClient(app); response = client.get('/'); assert response.status_code == 200"
+          PYTHONPATH=$PYTHONPATH:. uv run python -c "from app.main import app; from fastapi.testclient import TestClient; client = TestClient(app); response = client.get('/'); assert response.status_code == 200"
