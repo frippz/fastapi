@@ -37,13 +37,13 @@ jobs:
 
       - name: Run tests
         run: |
-          PYTHONPATH=$PYTHONPATH:. pytest tests/ -v
+          PYTHONPATH=$PYTHONPATH:. uv run pytest tests/ -v
 
       - name: Run linting
         run: |
-          PYTHONPATH=$PYTHONPATH:. ruff check .
-          PYTHONPATH=$PYTHONPATH:. ruff format --check .
+          PYTHONPATH=$PYTHONPATH:. uv run ruff check .
+          PYTHONPATH=$PYTHONPATH:. uv run ruff format --check .
 
       - name: Verify application starts
         run: |
-          PYTHONPATH=$PYTHONPATH:. python -c "from app.main import app; from fastapi.testclient import TestClient; client = TestClient(app); response = client.get('/'); assert response.status_code == 200"
+          PYTHONPATH=$PYTHONPATH:. uv run python -c "from app.main import app; from fastapi.testclient import TestClient; client = TestClient(app); response = client.get('/'); assert response.status_code == 200"
