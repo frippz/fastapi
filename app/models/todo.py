@@ -17,9 +17,23 @@ class TodoCreate(TodoBase):
     pass
 
 
+class TodoCreateBatch(BaseModel):
+    """Model for creating multiple todos."""
+
+    todos: List[TodoCreate]
+
+
 class TodoUpdate(BaseModel):
     """Model for updating a todo."""
 
+    task: Optional[str] = Field(None, min_length=1, max_length=200)
+    completed: Optional[bool] = None
+
+
+class TodoBatchUpdate(BaseModel):
+    """Model for updating multiple todos."""
+
+    id: int
     task: Optional[str] = Field(None, min_length=1, max_length=200)
     completed: Optional[bool] = None
 
