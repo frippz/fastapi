@@ -67,7 +67,9 @@ async def update_todos_batch(todos: List[TodoBatchUpdate]):
             cursor.execute("SELECT * FROM todos WHERE id = ?", (todo_update.id,))
             updated_todo = cursor.fetchone()
             updated_todos.append(
-                Todo(id=updated_todo[0], task=updated_todo[1], completed=updated_todo[2])
+                Todo(
+                    id=updated_todo[0], task=updated_todo[1], completed=updated_todo[2]
+                )
             )
 
         db.commit()
@@ -135,9 +137,13 @@ async def update_todo(todo_id: int, todo_update: TodoUpdate):
             # Fetch updated todo
             cursor.execute("SELECT * FROM todos WHERE id = ?", (todo_id,))
             updated_todo = cursor.fetchone()
-            return Todo(id=updated_todo[0], task=updated_todo[1], completed=updated_todo[2])
+            return Todo(
+                id=updated_todo[0], task=updated_todo[1], completed=updated_todo[2]
+            )
 
-        return Todo(id=existing_todo[0], task=existing_todo[1], completed=existing_todo[2])
+        return Todo(
+            id=existing_todo[0], task=existing_todo[1], completed=existing_todo[2]
+        )
 
 
 @router.delete("/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)
