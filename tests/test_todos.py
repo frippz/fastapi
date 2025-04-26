@@ -30,7 +30,9 @@ def test_get_todos(client):
 def test_toggle_todo_completion(client):
     """Test toggling a todo's completion status."""
     # Create a todo
-    create_response = client.post("/todos/", json={"task": "Test todo", "completed": False})
+    create_response = client.post(
+        "/todos/", json={"task": "Test todo", "completed": False}
+    )
     todo_id = create_response.json()["id"]
 
     # Toggle completion to true
@@ -47,12 +49,16 @@ def test_toggle_todo_completion(client):
 def test_create_todo_with_completion_status(client):
     """Test creating a todo with specific completion status."""
     # Create a completed todo
-    response = client.post("/todos/", json={"task": "Completed todo", "completed": True})
+    response = client.post(
+        "/todos/", json={"task": "Completed todo", "completed": True}
+    )
     assert response.status_code == 201
     assert response.json()["completed"] is True
 
     # Create an incomplete todo
-    response = client.post("/todos/", json={"task": "Incomplete todo", "completed": False})
+    response = client.post(
+        "/todos/", json={"task": "Incomplete todo", "completed": False}
+    )
     assert response.status_code == 201
     assert response.json()["completed"] is False
 
@@ -60,7 +66,9 @@ def test_create_todo_with_completion_status(client):
 def test_update_todo_partial_fields(client):
     """Test updating a todo with partial fields."""
     # Create a todo
-    create_response = client.post("/todos/", json={"task": "Original task", "completed": False})
+    create_response = client.post(
+        "/todos/", json={"task": "Original task", "completed": False}
+    )
     todo_id = create_response.json()["id"]
 
     # Update only completion status
