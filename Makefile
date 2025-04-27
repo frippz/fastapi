@@ -7,13 +7,9 @@ UVICORN = $(VENV)/bin/uvicorn
 RUFF = $(VENV)/bin/ruff
 
 install:
-	python -m venv $(VENV)
-	uv venv
 	uv pip install -r requirements.txt
 
 install-dev:
-	python -m venv $(VENV)
-	uv venv
 	uv pip install -r requirements-dev.txt
 
 start:
