@@ -27,16 +27,15 @@ jobs:
 
       - name: Install dependencies
         run: |
-          uv pip install -r requirements-dev.txt
+          make install-dev
 
       - name: Run tests
         run: |
-          uv run pytest tests/ -v
+          make test
 
       - name: Run linting
         run: |
-          uv run ruff check .
-          uv run ruff format --check .
+          make lint
 
       - name: Verify application starts
         run: |
