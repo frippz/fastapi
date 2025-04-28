@@ -1,11 +1,5 @@
 .PHONY: install install-dev start lint format test clean
 
-VENV = .venv
-PYTHON = $(VENV)/bin/python
-PIP = $(VENV)/bin/pip
-UVICORN = $(VENV)/bin/uvicorn
-RUFF = $(VENV)/bin/ruff
-
 install:
 	uv pip install -r requirements.txt
 
@@ -13,18 +7,16 @@ install-dev:
 	uv pip install -r requirements-dev.txt
 
 start:
-	$(UVICORN) app.main:app --reload
+	uvx uvicorn app.main:app --reload
 
 lint:
-	$(RUFF) check .
+	uvx ruff check .
 
 format:
-	$(RUFF) format .
+	uvx ruff format .
 
 test:
-	$(PYTHON) -m pytest
+	uv run python -m pytest
 
 clean:
-	rm -rf $(VENV)
-	find . -type d -name "__pycache__" -exec rm -rf {} +
-	find . -type f -name "*.pyc" -delete
+	uv clean
