@@ -7,7 +7,7 @@ install-dev:
 	uv pip install -r requirements-dev.txt
 
 start:
-	uvx uvicorn app.main:app --reload
+	uv run uvicorn app.main:app --reload
 
 lint:
 	uvx ruff check .
