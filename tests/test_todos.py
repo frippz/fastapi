@@ -1,5 +1,17 @@
 """Tests for the todos endpoints."""
 
+import pytest
+from app.database import get_db
+
+@pytest.fixture(autouse=True)
+def cleanup_todos():
+    """Clean up todos after each test."""
+    yield
+    with get_db() as db:
+        cursor = db.cursor()
+        cursor.execute("DELETE FROM todos")
+        db.commit()
+
 
 def test_create_todo(client):
     """Test creating a new todo."""
