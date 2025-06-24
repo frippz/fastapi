@@ -2,7 +2,6 @@
   "rangeStrategy": "pin",
   "extends": ["config:recommended", "schedule:weekdays"],
   "timezone": "CET",
-  "prConcurrentLimit": 5,
   "branchPrefix": "renovate-",
   "automergeSchedule": ["after 8am and before 4pm every weekday"],
   "nvm": {
