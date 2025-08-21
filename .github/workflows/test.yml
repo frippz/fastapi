@@ -25,6 +25,13 @@ jobs:
           cache-dependency-glob: |
             **/requirements*.txt
 
+      - name: Verify uv can install Python from .python-version
+        run: |
+          PY_VER=$(tr -d '[:space:]' < .python-version)
+          echo "Installing Python ${PY_VER} via uv"
+          uv python install "${PY_VER}"
+          uv run --python "${PY_VER}" python -c "import sys; v=sys.version.split()[0]; assert v.startswith('${PY_VER}'), f'Expected ${PY_VER}, got {v}'"
+
       - name: Install dependencies
         run: |
           make install-dev
