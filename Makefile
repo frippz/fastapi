@@ -1,4 +1,8 @@
-.PHONY: install install-dev start lint format test clean
+.PHONY: env install install-dev start lint format test clean
+
+env:
+	uv venv
+	make install-dev
 
 install:
 	uv pip install -r requirements.txt
