@@ -1,15 +1,16 @@
-FROM python:3.12-slim
+FROM python:3.12-alpine
 
 WORKDIR /app
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache curl
+
+# Install uv
+RUN pip install --no-cache-dir uv
 
 # Copy requirements and install dependencies
 COPY requirements.txt .
-RUN make install
+RUN uv pip install --system -r requirements.txt
 
 # Copy application code
 COPY app/ ./app/
