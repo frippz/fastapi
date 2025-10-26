@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.pytest_cache/
+.coverage
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Development
+.git/
+.gitignore
+README.md
+Makefile
+pytest.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local database (use volume mount in production)
+data.db
+
+# Development dependencies
+requirements-dev.txt
+
+# Tests
+tests/

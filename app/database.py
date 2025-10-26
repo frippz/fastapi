@@ -1,5 +1,6 @@
 """Database connection and initialization."""
 
+import os
 import sqlite3
 from contextlib import contextmanager
 from pathlib import Path
@@ -7,7 +8,14 @@ from pathlib import Path
 
 def get_db_path() -> Path:
     """Get the path to the database file."""
-    return Path(__file__).parent.parent / "data.db"
+    # Allow custom database path via environment variable
+    db_path = os.getenv("DATABASE_PATH", "/app/data/data.db")
+    db_file = Path(db_path)
+    
+    # Ensure directory exists
+    db_file.parent.mkdir(parents=True, exist_ok=True)
+    
+    return db_file
 
 
 @contextmanager

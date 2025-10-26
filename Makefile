@@ -1,4 +1,4 @@
-.PHONY: env install install-dev start lint format test clean
+.PHONY: env install install-dev start start-prod lint format test clean docker-build docker-run
 
 env:
 	uv venv
@@ -13,6 +13,9 @@ install-dev:
 start:
 	uv run uvicorn app.main:app --reload
 
+start-prod:
+	uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
+
 lint:
 	uvx ruff check .
 
@@ -21,6 +24,12 @@ format:
 
 test:
 	uv run python -m pytest
+
+docker-build:
+	docker build -t fastapi-demo .
+
+docker-run:
+	docker run -p 8000:8000 fastapi-demo
 
 clean:
 	uv clean

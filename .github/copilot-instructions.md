@@ -63,4 +63,23 @@ Example: `UserBase`, `UserCreate`, `User` (response model)
 - **Package Management**: Uses `uv` exclusively (not pip directly)
 - **Email Validation**: Uses `email-validator` for EmailStr fields
 
+## Production Deployment
+
+### Docker & Coolify Ready
+- **Dockerfile**: Production-optimized with Python 3.12, non-root user, health checks
+- **Environment Variables**: `ENVIRONMENT=production`, `ALLOWED_ORIGINS`, `DATABASE_PATH`
+- **Database**: SQLite with configurable path (`/app/data/data.db` in production)
+- **CORS**: Restrictive in production, permissive in development
+- **Docs**: Auto-disabled in production (`ENVIRONMENT=production`)
+
+### Commands
+- **Production Start**: `make start-prod` (4 workers, no reload)
+- **Docker Build**: `make docker-build`
+- **Docker Run**: `make docker-run`
+
+### Coolify Setup
+1. Set `ENVIRONMENT=production` and configure `ALLOWED_ORIGINS`
+2. Mount volume at `/app/data` for database persistence
+3. Application auto-configures for production mode
+
 When modifying this codebase, maintain the raw SQL approach, follow the established Pydantic model patterns, and ensure foreign key relationships are properly validated in router logic.
