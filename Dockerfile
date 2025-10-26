@@ -18,6 +18,6 @@ COPY app/ ./app/
 # Create data directory with proper permissions
 RUN mkdir -p /app/data && chmod 755 /app/data
 
-EXPOSE 8000
+EXPOSE 80
 
-CMD ["uv", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uv", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
