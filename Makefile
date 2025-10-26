@@ -11,7 +11,7 @@ install-dev:
 	uv pip install -r requirements-dev.txt
 
 start:
-	uv run uvicorn app.main:app --reload
+	uv run uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
 
 start-prod:
 	uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4

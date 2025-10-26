@@ -9,7 +9,9 @@ from pathlib import Path
 def get_db_path() -> Path:
     """Get the path to the database file."""
     # Allow custom database path via environment variable
-    db_path = os.getenv("DATABASE_PATH", "/app/data/data.db")
+    # Default to local data.db for development, /app/data/data.db for production
+    default_path = "/app/data/data.db" if os.getenv("ENVIRONMENT") == "production" else "data.db"
+    db_path = os.getenv("DATABASE_PATH", default_path)
     db_file = Path(db_path)
     
     # Ensure directory exists
