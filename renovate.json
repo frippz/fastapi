@@ -1,9 +1,6 @@
 {
   "rangeStrategy": "pin",
   "extends": ["config:recommended", "schedule:weekdays"],
-  "timezone": "CET",
-  "branchPrefix": "renovate-",
-  "automergeSchedule": ["after 8am and before 4pm every weekday"],
   "nvm": {
     "enabled": false
   },
@@ -11,17 +8,12 @@
     "dependencyDashboardApproval": true
   },
   "addLabels": ["renovate"],
+  "commitBody": " #patch",
   "packageRules": [
     {
       "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
       "matchCurrentVersion": "!/^0/",
       "automerge": true
-    },
-    {
-      "matchManagers": ["poetry"],
-      "matchPackageNames": ["python"],
-      "rangeStrategy": "replace",
-      "allowedVersions": "<=3.11"
     }
   ]
 }
