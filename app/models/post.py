@@ -1,8 +1,8 @@
 """Post models."""
 
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Optional
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field, computed_field, field_validator
 
 from app.models.user import User
 
@@ -70,6 +70,19 @@ class PostResponse(PostBase):
     id: int
     createdAt: datetime
     author: User
+
+    @field_validator("createdAt")
+    @classmethod
+    def assume_utc(cls, value: datetime) -> datetime:
+        """SQLite's CURRENT_TIMESTAMP is UTC but stored without a zone."""
+        return value if value.tzinfo else value.replace(tzinfo=UTC)
+
+    @computed_field
+    @property
+    def userId(self) -> str:
+        """Author's userId, exposed top-level for clients that expect it."""
+        return self.author.userId
+
     model_config = ConfigDict(
         from_attributes=True,
         json_schema_extra={
@@ -77,7 +90,8 @@ class PostResponse(PostBase):
                 "id": 1,
                 "title": "My First Blog Post",
                 "body": "This is the content of my first blog post.",
-                "createdAt": "2024-03-26T12:00:00",
+                "createdAt": "2024-03-26T12:00:00Z",
+                "userId": "123e4567-e89b-12d3-a456-426614174000",
                 "author": {
                     "id": 1,
                     "name": "Firstname Lastname",

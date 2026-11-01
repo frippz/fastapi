@@ -3,6 +3,7 @@
 import pytest
 from app.database import get_db
 
+
 @pytest.fixture(autouse=True)
 def cleanup_todos():
     """Clean up todos after each test."""

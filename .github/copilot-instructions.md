@@ -25,9 +25,7 @@ Each resource follows this naming convention:
 - `ResourceBase` - Common fields
 - `ResourceCreate` - Creation payload (includes foreign keys like `userId`)
 - `ResourceUpdate` - Optional fields for updates  
-- `ResourceResponse` - Full response with relationships/computed fields
-
-Example: `UserBase`, `UserCreate`, `User` (response model)
+- Response model - full row; named `User`, `Todo`, or `PostResponse` (which nests `author` and repeats `userId` at the top level)
 
 ### Router Organization
 - Each router uses `prefix="/resource"` and `tags=["resource"]`
@@ -37,11 +35,11 @@ Example: `UserBase`, `UserCreate`, `User` (response model)
 ## Development Workflow
 
 ### Essential Commands (all use `uv`)
-- **First-time Setup**: `make setup` (creates venv + installs dev dependencies)
+- **First-time Setup**: `make env` (creates venv + installs dev dependencies)
 - **Run**: `make start` (uvicorn with reload)
-- **Test**: `make test` (pytest)
-- **Format**: `make format` (ruff format)
-- **Lint**: `make lint` (ruff check)
+- **Test**: `make test` (pytest, against a temporary database set up by `tests/conftest.py`)
+- **Format**: `make format` (`uv run ruff format`, pinned version)
+- **Lint**: `make lint` (`uv run ruff check`, pinned version)
 
 ### Testing Structure
 - Uses `TestClient` from FastAPI for integration tests
@@ -66,7 +64,7 @@ Example: `UserBase`, `UserCreate`, `User` (response model)
 ## Production Deployment
 
 ### Docker & Coolify Ready
-- **Dockerfile**: Production-optimized with Python 3.12, non-root user, health checks
+- **Dockerfile**: Single-stage `python:3.14-alpine` image that serves on port 80 as root, with no Docker `HEALTHCHECK`
 - **Environment Variables**: `ENVIRONMENT=production`, `ALLOWED_ORIGINS`, `DATABASE_PATH`
 - **Database**: SQLite with configurable path (`/app/data/data.db` in production)
 - **CORS**: Restrictive in production, permissive in development

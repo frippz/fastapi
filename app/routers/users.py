@@ -1,8 +1,8 @@
 """Router for user operations."""
 
-from fastapi import APIRouter, HTTPException, status
-from typing import List
 import uuid
+
+from fastapi import APIRouter, HTTPException, status
 
 from app.database import get_db
 from app.models.user import User, UserCreate, UserUpdate
@@ -15,7 +15,7 @@ router = APIRouter(
 
 
 @router.post("/", response_model=User, status_code=status.HTTP_201_CREATED)
-async def create_user(user: UserCreate):
+def create_user(user: UserCreate):
     """Create a new user."""
     with get_db() as db:
         cursor = db.cursor()
@@ -44,8 +44,8 @@ async def create_user(user: UserCreate):
         )
 
 
-@router.get("/", response_model=List[User])
-async def get_users():
+@router.get("/", response_model=list[User])
+def get_users():
     """Get all users."""
     with get_db() as db:
         cursor = db.cursor()
@@ -58,7 +58,7 @@ async def get_users():
 
 
 @router.get("/{userId}", response_model=User)
-async def get_user(userId: str):
+def get_user(userId: str):
     """Get a specific user by userId."""
     with get_db() as db:
         cursor = db.cursor()
@@ -74,7 +74,7 @@ async def get_user(userId: str):
 
 
 @router.put("/{userId}", response_model=User)
-async def update_user(userId: str, user_update: UserUpdate):
+def update_user(userId: str, user_update: UserUpdate):
     """Update a user's information."""
     with get_db() as db:
         cursor = db.cursor()
@@ -131,7 +131,7 @@ async def update_user(userId: str, user_update: UserUpdate):
 
 
 @router.delete("/{userId}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_user(userId: str):
+def delete_user(userId: str):
     """Delete a user."""
     with get_db() as db:
         cursor = db.cursor()
@@ -143,7 +143,9 @@ async def delete_user(userId: str):
                 status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
             )
 
-        # Delete user
+        # Delete the user's posts too: SQLite FK enforcement is off, so they
+        # would otherwise be orphaned (and vanish from the JOINed post queries).
+        cursor.execute("DELETE FROM posts WHERE userId = ?", (userId,))
         cursor.execute("DELETE FROM users WHERE userId = ?", (userId,))
         db.commit()
-        return None
+        return

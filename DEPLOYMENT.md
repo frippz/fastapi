@@ -21,17 +21,12 @@ PORT=8000
 
 **Build Settings:**
 - Build Command: `docker build -t fastapi-demo .`
-- Start Command: `uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4`
-- Port: `8000`
+- Port: `80` (the Dockerfile's `CMD` serves on port 80)
+- To serve on 8000 instead, override the start command with `uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4` and set the port to `8000`
 
 ### 3. Docker Configuration
 
-The application includes:
-- Multi-stage build for efficiency
-- Non-root user for security
-- Health checks
-- Proper CORS configuration
-- Production-optimized uvicorn settings
+The image is a single-stage `python:3.14-alpine` build. It installs `requirements.txt` with `uv` and runs a single uvicorn worker on port 80 as root. It has no Docker `HEALTHCHECK`; configure the health check in Coolify instead (see below).
 
 ### 4. Database Persistence
 
@@ -43,7 +38,7 @@ services:
   fastapi:
     build: .
     ports:
-      - "8000:8000"
+      - "8000:80"
     volumes:
       - ./data:/app/data
     environment:
@@ -53,7 +48,7 @@ services:
 
 ### 5. Health Checks
 
-The application includes built-in health checks at `GET /` endpoint and Docker health checks.
+Point the platform health check at `GET /`, which returns 200. The image defines no Docker `HEALTHCHECK` itself.
 
 ### 6. Scaling Considerations
 
@@ -68,7 +63,6 @@ For production scaling:
 
 - API docs are disabled in production (`ENVIRONMENT=production`)
 - CORS is restricted to specified origins only
-- Application runs as non-root user
 - No sensitive data in logs
 
 ## Quick Deployment Steps
