@@ -13,7 +13,7 @@ router = APIRouter(
 
 
 @router.post("/", response_model=Todo, status_code=status.HTTP_201_CREATED)
-async def create_todo(todo: TodoCreate):
+def create_todo(todo: TodoCreate):
     """Create a new todo."""
     with get_db() as db:
         cursor = db.cursor()
@@ -30,7 +30,7 @@ async def create_todo(todo: TodoCreate):
 
 
 @router.put("/batch", response_model=List[Todo])
-async def update_todos_batch(todos: List[TodoBatchUpdate]):
+def update_todos_batch(todos: List[TodoBatchUpdate]):
     """Update multiple todos at once."""
     with get_db() as db:
         cursor = db.cursor()
@@ -77,7 +77,7 @@ async def update_todos_batch(todos: List[TodoBatchUpdate]):
 
 
 @router.get("/", response_model=List[Todo])
-async def get_todos():
+def get_todos():
     """Get all todos."""
     with get_db() as db:
         cursor = db.cursor()
@@ -87,7 +87,7 @@ async def get_todos():
 
 
 @router.get("/{todo_id}", response_model=Todo)
-async def get_todo(todo_id: int):
+def get_todo(todo_id: int):
     """Get a specific todo by ID."""
     with get_db() as db:
         cursor = db.cursor()
@@ -103,7 +103,7 @@ async def get_todo(todo_id: int):
 
 
 @router.put("/{todo_id}", response_model=Todo)
-async def update_todo(todo_id: int, todo_update: TodoUpdate):
+def update_todo(todo_id: int, todo_update: TodoUpdate):
     """Update a todo."""
     with get_db() as db:
         cursor = db.cursor()
@@ -147,7 +147,7 @@ async def update_todo(todo_id: int, todo_update: TodoUpdate):
 
 
 @router.delete("/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_todo(todo_id: int):
+def delete_todo(todo_id: int):
     """Delete a todo."""
     with get_db() as db:
         cursor = db.cursor()

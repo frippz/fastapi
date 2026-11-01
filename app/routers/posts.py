@@ -14,7 +14,7 @@ router = APIRouter(
 
 
 @router.post("/", response_model=PostResponse, status_code=status.HTTP_201_CREATED)
-async def create_post(post: PostCreate):
+def create_post(post: PostCreate):
     """Create a new post."""
     with get_db() as db:
         cursor = db.cursor()
@@ -65,7 +65,7 @@ async def create_post(post: PostCreate):
 
 
 @router.get("/", response_model=List[PostResponse])
-async def get_posts():
+def get_posts():
     """Get all posts with author information."""
     with get_db() as db:
         cursor = db.cursor()
@@ -74,7 +74,7 @@ async def get_posts():
                    u.id as author_id, u.name as author_name, u.email as author_email, u.userId as author_userId
             FROM posts p
             JOIN users u ON p.userId = u.userId
-            ORDER BY p.createdAt DESC
+            ORDER BY p.createdAt DESC, p.id DESC
         """)
         posts = cursor.fetchall()
 
@@ -91,7 +91,7 @@ async def get_posts():
 
 
 @router.get("/{post_id}", response_model=PostResponse)
-async def get_post(post_id: int):
+def get_post(post_id: int):
     """Get a specific post by ID with author information."""
     with get_db() as db:
         cursor = db.cursor()
@@ -122,7 +122,7 @@ async def get_post(post_id: int):
 
 
 @router.get("/user/{userId}", response_model=List[PostResponse])
-async def get_user_posts(userId: str):
+def get_user_posts(userId: str):
     """Get all posts by a specific user."""
     with get_db() as db:
         cursor = db.cursor()
@@ -142,7 +142,7 @@ async def get_user_posts(userId: str):
             FROM posts p
             JOIN users u ON p.userId = u.userId
             WHERE p.userId = ?
-            ORDER BY p.createdAt DESC
+            ORDER BY p.createdAt DESC, p.id DESC
         """,
             (userId,),
         )
@@ -161,7 +161,7 @@ async def get_user_posts(userId: str):
 
 
 @router.put("/{post_id}", response_model=PostResponse)
-async def update_post(post_id: int, post_update: PostUpdate):
+def update_post(post_id: int, post_update: PostUpdate):
     """Update a post."""
     with get_db() as db:
         cursor = db.cursor()
@@ -240,7 +240,7 @@ async def update_post(post_id: int, post_update: PostUpdate):
 
 
 @router.delete("/{post_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_post(post_id: int):
+def delete_post(post_id: int):
     """Delete a post."""
     with get_db() as db:
         cursor = db.cursor()
