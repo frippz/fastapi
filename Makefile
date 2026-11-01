@@ -17,10 +17,10 @@ start-prod:
 	uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
 
 lint:
-	uvx ruff check .
+	uv run ruff check .
 
 format:
-	uvx ruff format .
+	uv run ruff format .
 
 test:
 	uv run python -m pytest
